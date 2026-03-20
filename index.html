@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hausarztpraxis [Ihr Name] | Professionelle Betreuung</title>
     <style>
-        :root { --primary: #005596; --secondary: #f0f4f8; --wa: #25D366; --warning: #fff3cd; --text: #2c3e50; }
+        :root { --primary: #005596; --secondary: #f0f4f8; --warning: #fff3cd; --text: #2c3e50; }
         body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: var(--text); margin: 0; background: #fff; }
         
         header { background: var(--primary); color: white; padding: 60px 20px; text-align: center; }
@@ -22,9 +22,9 @@
         .main-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin: 40px 0; }
         .card { background: var(--secondary); padding: 30px; border-radius: 15px; border-top: 5px solid var(--primary); }
         
-        /* WhatsApp */
-        .wa-btn { background: var(--wa); color: white; text-decoration: none; padding: 15px 30px; border-radius: 40px; display: inline-flex; align-items: center; font-weight: bold; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: 0.3s; }
-        .wa-btn:hover { background: #128C7E; transform: translateY(-2px); }
+        /* Email Button */
+        .mail-btn { background: var(--primary); color: white; text-decoration: none; padding: 15px 30px; border-radius: 40px; display: inline-flex; align-items: center; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 85, 150, 0.3); transition: 0.3s; }
+        .mail-btn:hover { background: #003d6b; transform: translateY(-2px); }
 
         /* Team */
         .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 25px; margin-top: 40px; }
@@ -54,7 +54,7 @@
         <span style="font-size: 24px; margin-right: 15px;">⚠️</span>
         <div id="statusText">
             <strong>Aktueller Hinweis:</strong> Wir nehmen derzeit Terminanfragen für den nächsten Monat entgegen. 
-            Bitte geben Sie bei Ihrer WhatsApp-Nachricht Ihren <strong>Namen, Geburtsdatum</strong> und <strong>Versicherungsstatus</strong> an.
+            Bitte geben Sie in Ihrer E-Mail Ihren <strong>Namen, Geburtsdatum</strong> und <strong>Versicherungsstatus</strong> an.
         </div>
     </div>
 
@@ -69,11 +69,11 @@
         </div>
 
         <div class="card" style="text-align: center; border: 2px solid var(--primary);">
-            <h3>💬 Termin per WhatsApp</h3>
-            <p>Senden Sie uns Ihre Anfrage an unsere Festnetznummer:</p>
-            <p style="font-size: 1.5rem; font-weight: bold;">030 - 12345678</p>
-            <a href="https://wa.me/493012345678" class="wa-btn" id="waLink">
-                <span style="margin-right:10px;">💬</span> Anfrage senden
+            <h3>📧 Termin per E-Mail</h3>
+            <p>Senden Sie uns Ihre Anfrage bequem an:</p>
+            <p style="font-size: 1.2rem; font-weight: bold; color: var(--primary);">termin@praxis-name.de</p>
+            <a href="mailto:termin@praxis-name.de?subject=Terminanfrage&body=Name:%0D%0AGeburtsdatum:%0D%0AVersicherungsstatus:" class="mail-btn" id="mailLink">
+                <span style="margin-right:10px;">✉️</span> E-Mail schreiben
             </a>
             <p style="font-size: 0.8rem; margin-top: 15px; color: #666;">
                 Antwortzeit i.d.R. innerhalb von 24 Stunden an Werktagen.
@@ -117,7 +117,7 @@
             </div>
             <div>
                 <h5>Datenschutz</h5>
-                Die Kommunikation via WhatsApp ist verschlüsselt, jedoch weisen wir auf die Datenschutzbestimmungen von Meta hin. Medizinische Details klären wir bevorzugt persönlich.
+                Bitte beachten Sie, dass die Datenübertragung per E-Mail Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich. Medizinische Details klären wir bevorzugt persönlich.
             </div>
             <div>
                 <h5>Notfall</h5>
@@ -129,10 +129,8 @@
 </footer>
 
 <script>
-    // 1. DYNAMIC UPDATE FROM REMOTE FILE
     async function loadRemoteNotice() {
         try {
-            // This looks for a file called notice.txt in your web folder
             const response = await fetch('notice.txt', { cache: "no-store" });
             if (response.ok) {
                 const text = await response.text();
@@ -145,15 +143,13 @@
         }
     }
 
-    // 2. WHATSAPP LOGGING (Your existing logic)
-    document.getElementById('waLink').onclick = function() {
+    document.getElementById('mailLink').onclick = function() {
         const timestamp = new Date().toLocaleString('de-DE');
         let logs = JSON.parse(localStorage.getItem('praxis_anfragen') || "[]");
-        logs.push(timestamp);
+        logs.push({type: 'email', time: timestamp});
         localStorage.setItem('praxis_anfragen', JSON.stringify(logs));
     };
 
-    // Run remote check on load
     window.onload = loadRemoteNotice;
 </script>
 
