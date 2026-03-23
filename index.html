@@ -131,15 +131,20 @@
 <script>
     async function loadRemoteNotice() {
         try {
-            const response = await fetch('notice.txt', { cache: "no-store" });
+            // Fetch notice.txt with a timestamp to prevent browser caching
+            const response = await fetch('notice.txt?t=' + Date.now(), { cache: "no-store" });
+            
             if (response.ok) {
                 const text = await response.text();
-                if (text.trim().length > 0) {
-                    document.getElementById('statusText').innerHTML = `<strong>Aktueller Hinweis:</strong> ${text}`;
+                const cleanText = text.trim();
+                
+                // Only replace the text if notice.txt has actual content (more than 3 chars)
+                if (cleanText.length > 3) {
+                    document.getElementById('statusText').innerHTML = `<strong>Aktueller Hinweis:</strong> ${cleanText}`;
                 }
             }
         } catch (e) {
-            console.log("No remote notice found, using default.");
+            console.log("Remote notice not available. Using default static text.");
         }
     }
 
@@ -150,6 +155,7 @@
         localStorage.setItem('praxis_anfragen', JSON.stringify(logs));
     };
 
+    // Load the notice when the page finishes loading
     window.onload = loadRemoteNotice;
 </script>
 
