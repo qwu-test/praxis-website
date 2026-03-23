@@ -1,26 +1,36 @@
 name: Remote Update Notice
+
 on:
   repository_dispatch:
-    # This 'type' must match what you send in your Python script
+    # This must match the 'event_type' in your Python script
     types: [local_data_update]
 
 jobs:
   update-notice:
     runs-on: ubuntu-latest
+    # Permissions needed to comment and push to the repo
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Overwrite notice.txt
         run: |
-          # Takes the message from the API call and writes it to notice.txt
+          # Takes the message from your Python script and overwrites notice.txt
           echo "${{ github.event.client_payload.message }}" > notice.txt
 
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add notice.txt
-          # The '|| exit 0' prevents the workflow from failing if the text is identical
-          git commit -m "Automated update to notice.txt" || exit 0
-          git push
+          
+          # Check if notice.txt actually changed compared to the last commit
+          if git diff --quiet notice.txt; then
+            echo "No changes detected. Skipping commit."
+          else
+            git add notice.txt
+            git commit -m "Automated update: New notice received"
+            git push
+          fi
